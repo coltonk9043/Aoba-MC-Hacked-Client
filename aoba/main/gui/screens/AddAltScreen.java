@@ -100,7 +100,7 @@ public class AddAltScreen extends Screen {
 	   public void render(MatrixStack matrixStack, int p_render_1_, int p_render_2_, float p_render_3_) {
 	      this.renderBackground(matrixStack);
 	      drawCenteredString(matrixStack, this.font, this.title.getString(), this.width / 2, 17, 16777215);
-	      drawString(matrixStack, this.font, this.textFieldAltPassword.getText().isEmpty() ? I18n.format("Cracked Account") : I18n.format("Premium Account"), this.width / 2 - 100, 138, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
+	      drawString(matrixStack, this.font, this.textFieldAltPassword.getText().isEmpty() ? I18n.format("Cracked (Poverty) Account") : I18n.format("Premium Account"), this.width / 2 - 100, 138, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
 	      drawString(matrixStack, this.font, I18n.format("Enter Username"), this.width / 2 - 100, 153, 10526880);
 	      drawString(matrixStack, this.font, I18n.format("Enter Password"), this.width / 2 - 100, 194, 10526880);
 	      this.textFieldAltUsername.render(matrixStack, p_render_1_, p_render_2_, p_render_3_);
