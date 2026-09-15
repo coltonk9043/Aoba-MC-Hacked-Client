@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.gui.GuiManager;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.renderer.CubeMap;
@@ -21,15 +22,16 @@ public class GuiRendererMixin {
 
 	@Inject(method = "render", at = @At("TAIL"))
 	private void onRenderTail(CallbackInfo ci) {
-		if (Aoba.getInstance() != null && Aoba.getInstance().render2D != null) {
-			Aoba.getInstance().render2D.render();
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba != null && aoba.render2D != null) {
+			aoba.render2D.render();
 		}
 	}
 
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/CubeMap;render(FF)V"))
 	private void aoba$redirectPanoramaCubeMap(CubeMap instance, float rotX, float rotY) {
-		boolean useAoba = Aoba.getInstance() != null && GuiManager.enableCustomTitle.getValue();
-		if(useAoba) {
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba != null && aoba.guiManager != null && GuiManager.enableCustomTitle.getValue()) {
 			this.aoba$cubeMap.render(rotX, rotY);
 		}else {
 			instance.render(rotX, rotY);

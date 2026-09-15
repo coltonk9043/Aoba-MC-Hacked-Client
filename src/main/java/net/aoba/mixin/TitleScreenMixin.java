@@ -25,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.screens.MainMenuScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -40,7 +42,8 @@ public abstract class TitleScreenMixin extends Screen {
 
 	@Inject(method = "init", at = @At("RETURN"))
 	public void postInitHook(CallbackInfo ci) {
-		if (GuiManager.enableCustomTitle.getValue())
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba != null && aoba.guiManager != null && GuiManager.enableCustomTitle.getValue())
 			MC.gui.setScreen(new MainMenuScreen());
 	}
 }

@@ -8,6 +8,7 @@ import com.mojang.blaze3d.buffers.Std140SizeCalculator;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.gui.colors.Color;
 import net.aoba.rendering.RenderApi;
 
@@ -67,16 +68,26 @@ public class Shader {
 		return new Shader(this);
 	}
 
+	private static Shader getTemplate(String id) {
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba == null || aoba.shaderManager == null)
+			throw new IllegalStateException("Shader '" + id + "' created before the Shader Manager was initialized.");
+
+		Shader shader = aoba.shaderManager.getShader(id);
+		if (shader == null)
+			throw new IllegalStateException("Shader '" + id + "' is not registered in the Shader Manager");
+			
+		return shader.copy();
+	}
+
 	public static Shader solid(Color color) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("solid").copy();
+		Shader shader = getTemplate("solid");
 		shader.setColor(0, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 		return shader;
 	}
 
 	public static Shader gradient(Color start, Color end, float angle) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("gradient").copy();
+		Shader shader = getTemplate("gradient");
 		shader.setColor(0, start.getRed(), start.getGreen(), start.getBlue(), start.getAlpha());
 		shader.setColor(1, end.getRed(), end.getGreen(), end.getBlue(), end.getAlpha());
 		shader.setFloat(2, angle);
@@ -84,8 +95,7 @@ public class Shader {
 	}
 
 	public static Shader radialGradient(Color inner, Color outer, float centerX, float centerY, float radius) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("radial_gradient").copy();
+		Shader shader = getTemplate("radial_gradient");
 		shader.setColor(0, inner.getRed(), inner.getGreen(), inner.getBlue(), inner.getAlpha());
 		shader.setColor(1, outer.getRed(), outer.getGreen(), outer.getBlue(), outer.getAlpha());
 		shader.setFloat(2, centerX);
@@ -95,8 +105,7 @@ public class Shader {
 	}
 
 	public static Shader conicalGradient(Color start, Color end, float startAngle, float centerX, float centerY) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("conical_gradient").copy();
+		Shader shader = getTemplate("conical_gradient");
 		shader.setColor(0, start.getRed(), start.getGreen(), start.getBlue(), start.getAlpha());
 		shader.setColor(1, end.getRed(), end.getGreen(), end.getBlue(), end.getAlpha());
 		shader.setFloat(2, startAngle);
@@ -106,8 +115,7 @@ public class Shader {
 	}
 
 	public static Shader diamondGradient(Color inner, Color outer, float centerX, float centerY, float size) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("diamond_gradient").copy();
+		Shader shader = getTemplate("diamond_gradient");
 		shader.setColor(0, inner.getRed(), inner.getGreen(), inner.getBlue(), inner.getAlpha());
 		shader.setColor(1, outer.getRed(), outer.getGreen(), outer.getBlue(), outer.getAlpha());
 		shader.setFloat(2, centerX);
@@ -117,8 +125,7 @@ public class Shader {
 	}
 
 	public static Shader blur(Color tint, float radius, float quality) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("blur").copy();
+		Shader shader = getTemplate("blur");
 		shader.setColor(3, tint.getRed(), tint.getGreen(), tint.getBlue(), tint.getAlpha());
 		shader.setFloat(4, radius);
 		shader.setFloat(5, quality);
@@ -127,8 +134,7 @@ public class Shader {
 
 	public static Shader blurGradient(Color start, Color end,
 			float radius, float quality, float angle) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("blur_gradient").copy();
+		Shader shader = getTemplate("blur_gradient");
 		shader.setColor(3, start.getRed(), start.getGreen(), start.getBlue(), start.getAlpha());
 		shader.setColor(4, end.getRed(), end.getGreen(), end.getBlue(), end.getAlpha());
 		shader.setFloat(5, radius);
@@ -138,15 +144,13 @@ public class Shader {
 	}
 
 	public static Shader image(Color tint) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("image").copy();
+		Shader shader = getTemplate("image");
 		shader.setColor(0, tint.getRed(), tint.getGreen(), tint.getBlue(), tint.getAlpha());
 		return shader;
 	}
 
 	public static Shader rainbow(float speed, float scale, float saturation, float brightness, float transparency) {
-		ShaderManager manager = Aoba.getInstance().shaderManager;
-		Shader shader = manager.getShader("rainbow").copy();
+		Shader shader = getTemplate("rainbow");
 		shader.setFloat(0, speed);
 		shader.setFloat(1, scale);
 		shader.setFloat(2, saturation);

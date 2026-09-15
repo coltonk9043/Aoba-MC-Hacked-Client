@@ -33,6 +33,7 @@ import net.aoba.AobaClient;
 import net.aoba.event.events.StartAttackEvent;
 import net.aoba.event.events.SubtickEvent;
 import net.aoba.event.events.TickEvent;
+import net.minecraft.CrashReport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.Options;
@@ -72,6 +73,9 @@ public abstract class MinecraftMixin {
 	public abstract boolean isWindowActive();
 
 	@Shadow
+	public abstract void delayCrash(CrashReport crashReport);
+
+	@Shadow
 	@Nullable
 	public HitResult hitResult;
 	
@@ -83,9 +87,13 @@ public abstract class MinecraftMixin {
 	private void onfinishedloading(CallbackInfo info) {
 		if(aobaLoaded)
 			return;
-		
-		Aoba.getInstance().loadAssets();
+
 		aobaLoaded = true;
+		try {
+			Aoba.getInstance().loadAssets();
+		} catch (Throwable t) {
+			delayCrash(CrashReport.forThrowable(t, "Initializing Aoba Client"));
+		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "tick()V")
@@ -147,7 +155,7 @@ public abstract class MinecraftMixin {
 		AobaClient aoba = Aoba.getInstance();
 
 		if (aoba.guiManager != null) {
-			Aoba.getInstance().guiManager.setClickGuiOpen(false);
+			aoba.guiManager.setClickGuiOpen(false);
 		}
 	}
 
